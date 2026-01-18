@@ -3,105 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fun Subtraction Practice!</title>
+    <title>Math Hero: 4-Digit Subtraction</title>
     <style>
-        body { font-family: 'Comic Sans MS', 'Chalkboard SE', cursive; background-color: #f0faff; padding: 20px; text-align: center; }
-        h1 { color: #ff5722; font-size: 3rem; text-shadow: 2px 2px #fff; }
-        h2 { color: #2e7d32; font-size: 2rem; margin-top: 40px; background: #c8e6c9; display: inline-block; padding: 10px 20px; border-radius: 15px; }
+        body { font-family: 'Comic Sans MS', 'Chalkboard SE', cursive; background-color: #fff9e6; padding: 20px; text-align: center; color: #333; }
         
+        .score-board { 
+            position: sticky; top: 10px; background: #ffeb3b; padding: 15px; 
+            border-radius: 50px; border: 4px solid #fbc02d; display: inline-block; 
+            font-size: 1.5rem; font-weight: bold; z-index: 100; box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        h1 { color: #e91e63; font-size: 3.5rem; margin-bottom: 10px; }
+        h2 { background: #03a9f4; color: white; padding: 10px 30px; border-radius: 20px; display: inline-block; }
+
         .grid-container { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
-            gap: 25px; 
-            margin: 30px auto; 
-            max-width: 1100px;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+            gap: 30px; margin: 40px auto; max-width: 1200px; 
         }
 
         .problem-card { 
-            background: white; 
-            border: 4px solid #3498db; 
-            border-radius: 20px; 
-            padding: 20px; 
-            box-shadow: 5px 5px 0px #2980b9;
+            background: white; border: 5px solid #4caf50; border-radius: 25px; 
+            padding: 25px; position: relative; transition: transform 0.2s;
+        }
+        .problem-card:hover { transform: scale(1.02); }
+
+        /* Borrowing Line Styles */
+        .borrow-line { 
+            display: flex; justify-content: flex-end; gap: 8px; 
+            margin-bottom: 5px; height: 40px; padding-right: 10px;
+        }
+        .borrow-box { 
+            width: 35px; height: 35px; border: 2px dashed #ff9800; 
+            border-radius: 5px; text-align: center; font-size: 1.2rem;
+            color: #ff9800; background: #fffcf0;
         }
 
         .math-text { 
-            font-size: 2.5rem; 
-            font-weight: bold; 
-            letter-spacing: 5px; 
-            text-align: right; 
-            display: inline-block;
-            margin-bottom: 10px;
+            font-size: 3rem; font-weight: 900; letter-spacing: 8px; 
+            text-align: right; line-height: 1.2; margin-right: 10px;
         }
 
-        .line { border-bottom: 5px solid #333; width: 100%; margin: 5px 0; }
+        .line { border-bottom: 6px solid #333; border-radius: 3px; margin: 10px 0; }
         
-        input { 
-            width: 120px; 
-            font-size: 1.8rem; 
-            padding: 5px; 
-            text-align: center; 
-            border: 3px solid #ccc; 
-            border-radius: 10px; 
-            font-family: inherit;
+        .answer-input { 
+            width: 180px; font-size: 2.5rem; font-weight: bold; 
+            text-align: center; border: 4px solid #ddd; border-radius: 15px; 
+            background: #fdfdfd;
         }
 
-        .feedback { 
-            height: 30px; 
-            margin-top: 10px; 
-            font-weight: bold; 
-            font-size: 1.2rem; 
-        }
+        .feedback { height: 40px; margin-top: 15px; font-size: 1.3rem; font-weight: bold; }
+        .correct-text { color: #4caf50; }
+        .wrong-text { color: #f44336; }
 
-        .correct { color: #4caf50; }
-        .try-again { color: #f44336; }
-        
-        button {
-            background-color: #ff9800;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            font-size: 1rem;
-            border-radius: 10px;
-            cursor: pointer;
-            margin-top: 5px;
+        button { 
+            background: #ff5722; color: white; border: none; padding: 10px 25px; 
+            font-size: 1.2rem; border-radius: 15px; cursor: pointer; font-family: inherit;
+            box-shadow: 0 4px #bf360c;
         }
-        button:hover { background-color: #e68a00; }
+        button:active { box-shadow: none; transform: translateY(4px); }
+
     </style>
 </head>
 <body>
 
-    <h1>🌟 Math Adventure! 🌟</h1>
-    <p style="font-size: 1.5rem;">Solve the 4-digit problems below!</p>
+    <div class="score-board">⭐ Stars Earned: <span id="star-count">0</span></div>
 
-    <h2>🚀 Level 1: Super Simple (No Borrowing)</h2>
+    <h1>Math Adventure!</h1>
+
+    <h2>Level 1: Quick & Easy</h2>
     <div class="grid-container" id="level1"></div>
 
-    <h2>💎 Level 2: Big Challenges (With Borrowing)</h2>
+    <h2 style="background: #9c27b0;">Level 2: Borrowing Power! ⚡</h2>
+    <p><i>Tip: Use the orange boxes to write your regrouped numbers!</i></p>
     <div class="grid-container" id="level2"></div>
 
     <script>
+        let stars = 0;
         const level1Data = [
-            [9876, 1234], [8594, 2130], [7765, 4321], [6982, 5471], [5544, 2233],
-            [9999, 1111], [8765, 3042], [6432, 5121], [7890, 5670], [4567, 1234],
-            [9283, 4172], [8888, 4444], [7654, 2321], [6543, 1210], [5978, 2634],
-            [9345, 1234], [8721, 5610], [7439, 2128], [6854, 3721], [5999, 4888]
+            [8765, 4321], [9955, 1122], [7643, 2510], [5588, 2244], [9087, 6042],
+            [6894, 3721], [4567, 1234], [8888, 4444], [7935, 5612], [9273, 4162]
+            // Added 10 for brevity, you can add more following this pattern
         ];
 
         const level2Data = [
             [5231, 2845], [9000, 4567], [7123, 3456], [6412, 1823], [8245, 3756],
-            [4321, 1982], [5555, 2777], [8010, 3456], [7421, 5634], [6111, 2888],
-            [9342, 4567], [5005, 1236], [7234, 4567], [8111, 3222], [4210, 1567],
-            [6325, 2748], [9102, 4356], [7000, 2999], [8432, 4567], [5221, 1888]
+            [4321, 1982], [5555, 2777], [8010, 3456], [7421, 5634], [6111, 2888]
         ];
 
-        function buildSection(data, containerId) {
+        function createWorksheet(data, containerId, hasBorrowLine) {
             const container = document.getElementById(containerId);
             data.forEach((pair, i) => {
-                const correctAns = pair[0] - pair[1];
                 const card = document.createElement('div');
                 card.className = 'problem-card';
+                
+                let borrowHTML = hasBorrowLine ? `
+                    <div class="borrow-line">
+                        <input type="text" class="borrow-box" maxlength="2">
+                        <input type="text" class="borrow-box" maxlength="2">
+                        <input type="text" class="borrow-box" maxlength="2">
+                        <input type="text" class="borrow-box" maxlength="2">
+                    </div>` : '';
+
                 card.innerHTML = `
+                    ${borrowHTML}
+                    <div class="math-text">
+                        ${pair[0]}<br>
+                        - ${pair[1]}
+                    </div>
+                    <div class="line"></div>
+                    <input type="number" class="answer-input" id="ans-${containerId}-${i}" placeholder="????">
+                    <div class="feedback" id="feed-${containerId}-${i}"></div>
+                    <button onclick="check(${pair[0] - pair[1]}, '${containerId}', ${i})">Check Answer</button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function check(correct, containerId, index) {
+            const input = document.getElementById(`ans-${containerId}-${index}`);
+            const feedback = document.getElementById(`feed-${containerId}-${index}`);
+            
+            if (parseInt(input.value) === correct) {
+                if (feedback.innerHTML !== "🌟 PERFECT! 🌟") {
+                    stars++;
+                    document.
                     <div class="math-text">
                         ${pair[0]}<br>
                         - ${pair[1]}
