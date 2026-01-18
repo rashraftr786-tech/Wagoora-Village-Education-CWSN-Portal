@@ -3,145 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Math Hero: 4-Digit Subtraction</title>
+    <title>Math Adventure!</title>
     <style>
-        body { font-family: 'Comic Sans MS', 'Chalkboard SE', cursive; background-color: #fff9e6; padding: 20px; text-align: center; color: #333; }
+        body { font-family: 'Comic Sans MS', cursive, sans-serif; background-color: #eef9ff; text-align: center; padding: 20px; }
         
-        .score-board { 
-            position: sticky; top: 10px; background: #ffeb3b; padding: 15px; 
-            border-radius: 50px; border: 4px solid #fbc02d; display: inline-block; 
-            font-size: 1.5rem; font-weight: bold; z-index: 100; box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
+        /* Star Counter */
+        .score-box { 
+            position: fixed; top: 10px; right: 10px; background: #fff; 
+            padding: 10px 20px; border-radius: 30px; border: 4px solid #ffc107;
+            font-size: 1.5rem; font-weight: bold; z-index: 1000;
         }
 
-        h1 { color: #e91e63; font-size: 3.5rem; margin-bottom: 10px; }
-        h2 { background: #03a9f4; color: white; padding: 10px 30px; border-radius: 20px; display: inline-block; margin-top: 40px; }
+        h1 { color: #ff5722; font-size: 3rem; }
+        .section-title { background: #4caf50; color: white; padding: 10px 20px; border-radius: 15px; display: inline-block; margin: 20px 0; }
 
-        .grid-container { 
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
-            gap: 30px; margin: 40px auto; max-width: 1200px; 
+        .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; }
+
+        .card { 
+            background: white; border: 4px solid #2196f3; border-radius: 20px; 
+            padding: 20px; width: 260px; box-shadow: 0 6px 0 #1976d2;
         }
 
-        .problem-card { 
-            background: white; border: 5px solid #4caf50; border-radius: 25px; 
-            padding: 25px; position: relative; transition: all 0.3s ease;
+        /* Borrow Area */
+        .regroup-row { display: flex; justify-content: flex-end; gap: 12px; margin-bottom: 5px; padding-right: 25px; }
+        .regroup-box { width: 35px; height: 35px; border: 2px dashed #ff9800; border-radius: 5px; text-align: center; color: #ff9800; font-size: 1.2rem; }
+
+        .math-display { 
+            font-size: 3rem; font-weight: bold; text-align: right; 
+            font-family: 'Courier New', monospace; line-height: 1.2; margin-right: 20px;
         }
 
-        /* Borrowing Line Styles */
-        .borrow-line { 
-            display: flex; justify-content: flex-end; gap: 10px; 
-            margin-bottom: 10px; height: 45px; padding-right: 25px;
-        }
-        .borrow-box { 
-            width: 40px; height: 40px; border: 3px dashed #ff9800; 
-            border-radius: 8px; text-align: center; font-size: 1.3rem;
-            color: #ff9800; background: #fffcf0; font-weight: bold;
+        .divider { border-bottom: 6px solid #333; margin: 10px 0; border-radius: 10px; }
+
+        input[type="number"] { 
+            width: 80%; font-size: 2.5rem; text-align: center; 
+            border: 3px solid #ccc; border-radius: 10px; padding: 5px; margin-bottom: 10px;
         }
 
-        .math-text { 
-            font-size: 3.5rem; font-weight: 900; letter-spacing: 12px; 
-            text-align: right; line-height: 1.1; margin-right: 20px;
-            font-family: 'Courier New', Courier, monospace;
+        .check-btn { 
+            background: #ff5722; color: white; border: none; padding: 10px 25px; 
+            font-size: 1.3rem; border-radius: 15px; cursor: pointer; font-weight: bold;
         }
+        .check-btn:hover { background: #e64a19; }
 
-        .line { border-bottom: 8px solid #333; border-radius: 5px; margin: 15px 0; width: 100%; }
-        
-        .answer-input { 
-            width: 200px; font-size: 3rem; font-weight: bold; 
-            text-align: center; border: 5px solid #ddd; border-radius: 20px; 
-            background: #fdfdfd; margin-bottom: 15px; outline: none;
-        }
-
-        .feedback { height: 45px; margin-top: 5px; font-size: 1.5rem; font-weight: bold; }
-        .correct-text { color: #2e7d32; }
-        .wrong-text { color: #d32f2f; }
-
-        .btn-check { 
-            background: #ff5722; color: white; border: none; padding: 15px 35px; 
-            font-size: 1.4rem; border-radius: 20px; cursor: pointer; font-family: inherit;
-            box-shadow: 0 6px #bf360c; font-weight: bold;
-        }
-        .btn-check:active { box-shadow: none; transform: translateY(4px); }
-        
-        /* Success State */
-        .solved { background-color: #e8f5e9; border-color: #2e7d32; transform: scale(1.05); }
+        .msg { height: 30px; margin-top: 10px; font-weight: bold; font-size: 1.2rem; }
+        .win { background-color: #dff0d8 !important; border-color: #3c763d !important; }
     </style>
 </head>
 <body>
 
-    <div class="score-board">⭐ Stars Earned: <span id="star-count">0</span></div>
+    <div class="score-box">⭐ Stars: <span id="stars">0</span></div>
 
-    <h1>Math Adventure!</h1>
+    <h1>Math Hero Challenge!</h1>
 
-    <h2>Level 1: No Borrowing 🎈</h2>
-    <div class="grid-container" id="level1"></div>
+    <h2 class="section-title">Level 1: No Borrowing (Easy)</h2>
+    <div class="container" id="L1"></div>
 
-    <h2 style="background: #9c27b0;">Level 2: Borrowing Power ⚡</h2>
-    <div class="grid-container" id="level2"></div>
+    <h2 class="section-title" style="background:#9c27b0">Level 2: Borrowing Power (Hard)</h2>
+    <div class="container" id="L2"></div>
 
     <script>
-        let stars = 0;
+        let score = 0;
+        const l1Data = [[9876, 1234], [8594, 2130], [7765, 4321], [6982, 5471], [5544, 2233], [9999, 1111], [8765, 3042], [6432, 5121], [7890, 5670], [4567, 1234], [9283, 4172], [8888, 4444], [7654, 2321], [6543, 1210], [5978, 2634], [9345, 1234], [8721, 5610], [7439, 2128], [6854, 3721], [5999, 4888]];
+        const l2Data = [[5231, 2845], [9000, 4567], [7123, 3456], [6412, 1823], [8245, 3756], [4321, 1982], [5555, 2777], [8010, 3456], [7421, 5634], [6111, 2888], [9342, 4567], [5005, 1236], [7234, 4567], [8111, 3222], [4210, 1567], [6325, 2748], [9102, 4356], [7000, 2999], [8432, 4567], [5221, 1888]];
 
-        const level1Data = [
-            [9876, 1234], [8594, 2130], [7765, 4321], [6982, 5471], [5544, 2233],
-            [9999, 1111], [8765, 3042], [6432, 5
-                    </div>` : '';
+        function makeProblems(list, targetId, hasBorrow) {
+            const div = document.getElementById(targetId);
+            list.forEach((num, i) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.id = `card-${targetId}-${i}`;
+                
+                let borrowHtml = hasBorrow ? `<div class="regroup-row">
+                    <input type="text" class="regroup-box" maxlength="2">
+                    <input type="text" class="regroup-box" maxlength="2">
+                    <input type="text" class="regroup-box" maxlength="2">
+                    <input type="text" class="regroup-box" maxlength="2">
+                </div>` : '<div style="height:40px"></div>';
 
                 card.innerHTML = `
-                    ${borrowHTML}
-                    <div class="math-text">
-                        ${pair[0]}<br>
-                        - ${pair[1]}
-                    </div>
-                    <div class="line"></div>
-                    <input type="number" class="answer-input" id="ans-${containerId}-${i}" placeholder="????">
-                    <div class="feedback" id="feed-${containerId}-${i}"></div>
-                    <button onclick="check(${pair[0] - pair[1]}, '${containerId}', ${i})">Check Answer</button>
+                    ${borrowHtml}
+                    <div class="math-display">${num[0]}<br>- ${num[1]}</div>
+                    <div class="divider"></div>
+                    <input type="number" id="in-${targetId}-${i}" placeholder="????">
+                    <button class="check-btn" onclick="check(${num[0]}, ${num[1]}, '${targetId}', ${i})">Check!</button>
+                    <div class="msg" id="msg-${targetId}-${i}"></div>
                 `;
-                container.appendChild(card);
+                div.appendChild(card);
             });
         }
 
-        function check(correct, containerId, index) {
-            const input = document.getElementById(`ans-${containerId}-${index}`);
-            const feedback = document.getElementById(`feed-${containerId}-${index}`);
-            
-            if (parseInt(input.value) === correct) {
-                if (feedback.innerHTML !== "🌟 PERFECT! 🌟") {
-                    stars++;
-                    document.
-                    <div class="math-text">
-                        ${pair[0]}<br>
-                        - ${pair[1]}
-                    </div>
-                    <div class="line"></div>
-                    <input type="number" id="input-${containerId}-${i}" placeholder="????">
-                    <br>
-                    <button onclick="checkAnswer(${correctAns}, '${containerId}', ${i})">Check</button>
-                    <div class="feedback" id="feedback-${containerId}-${i}"></div>
-                `;
-                container.appendChild(card);
-            });
-        }
+        window.check = function(a, b, tid, i) {
+            const userIn = document.getElementById(`in-${tid}-${i}`);
+            const message = document.getElementById(`msg-${tid}-${i}`);
+            const card = document.getElementById(`card-${tid}-${i}`);
+            const correct = a - b;
 
-        function checkAnswer(correct, containerId, index) {
-            const input = document.getElementById(`input-${containerId}-${index}`);
-            const feedback = document.getElementById(`feedback-${containerId}-${index}`);
-            const userAns = parseInt(input.value);
-
-            if (userAns === correct) {
-                feedback.innerHTML = "✅ Awesome! You got it!";
-                feedback.className = "feedback correct";
-                input.style.borderColor = "#4caf50";
+            if (parseInt(userIn.value) === correct) {
+                if (!card.classList.contains('win')) {
+                    score++;
+                    document.getElementById('stars').innerText = score;
+                    card.classList.add('win');
+                }
+                message.innerText = "✅ Great Job!";
+                message.style.color = "green";
             } else {
-                feedback.innerHTML = "❌ Not quite! Try again!";
-                feedback.className = "feedback try-again";
-                input.style.borderColor = "#f44336";
+                message.innerText = "❌ Try again!";
+                message.style.color = "red";
             }
-        }
+        };
 
-        buildSection(level1Data, 'level1');
-        buildSection(level2Data, 'level2');
+        makeProblems(l1Data, 'L1', false);
+        makeProblems(l2Data, 'L2', true);
     </script>
 </body>
 </html>
+        
