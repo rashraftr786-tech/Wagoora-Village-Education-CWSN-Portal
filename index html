@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4-Digit Subtraction Worksheet</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 20px auto; padding: 20px; }
+        h1 { color: #2c3e50; text-align: center; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+        h2 { color: #2980b9; margin-top: 30px; border-left: 5px solid #3498db; padding-left: 10px; }
+        .grid-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 40px; }
+        .problem-card { border: 1px solid #ddd; padding: 15px; border-radius: 8px; background: #f9f9f9; text-align: right; font-family: 'Courier New', Courier, monospace; font-size: 1.2rem; }
+        .problem-number { font-size: 0.8rem; color: #7f8c8d; float: left; }
+        .line { border-bottom: 2px solid #333; margin-top: 5px; margin-bottom: 5px; }
+        .answer { color: #27ae60; font-weight: bold; margin-top: 5px; }
+        @media print { .no-print { display: none; } }
+    </style>
+</head>
+<body>
+
+    <h1>4-Digit Subtraction Practice</h1>
+
+    <h2>1. Without Regrouping (Borrowing)</h2>
+    <p>In these examples, every digit in the top number is greater than or equal to the digit below it.</p>
+    <div class="grid-container" id="no-regrouping">
+        </div>
+
+    <hr>
+
+    <h2>2. With Regrouping (Borrowing)</h2>
+    <p>In these examples, at least one column requires "borrowing" from the next place value.</p>
+    <div class="grid-container" id="regrouping">
+        </div>
+
+    <script>
+        const noRegroupingData = [
+            [9876, 1234], [8594, 2130], [7765, 4321], [6982, 5471], [5544, 2233],
+            [9999, 1111], [8765, 3042], [6432, 5121], [7890, 5670], [4567, 1234],
+            [9283, 4172], [8888, 4444], [7654, 2321], [6543, 1210], [5978, 2634],
+            [9345, 1234], [8721, 5610], [7439, 2128], [6854, 3721], [5999, 4888]
+        ];
+
+        const regroupingData = [
+            [5231, 2845], [9000, 4567], [7123, 3456], [6412, 1823], [8245, 3756],
+            [4321, 1982], [5555, 2777], [8010, 3456], [7421, 5634], [6111, 2888],
+            [9342, 4567], [5005, 1236], [7234, 4567], [8111, 3222], [4210, 1567],
+            [6325, 2748], [9102, 4356], [7000, 2999], [8432, 4567], [5221, 1888]
+        ];
+
+        function createProblems(data, containerId) {
+            const container = document.getElementById(containerId);
+            data.forEach((pair, index) => {
+                const div = document.createElement('div');
+                div.className = 'problem-card';
+                const result = pair[0] - pair[1];
+                div.innerHTML = `
+                    <span class="problem-number">#${index + 1}</span>
+                    <div>${pair[0]}</div>
+                    <div>- ${pair[1]}</div>
+                    <div class="line"></div>
+                    <div class="answer">${result}</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        createProblems(noRegroupingData, 'no-regrouping');
+        createProblems(regroupingData, 'regrouping');
+    </script>
+</body>
+</html>
